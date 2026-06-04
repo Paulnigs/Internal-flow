@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  TEAM_LEAD
+  TALENT
+}
+
+enum JobStatus {
+  OPEN
+  CLAIMED
+  SUBMITTED
+  APPROVED
+  REJECTED
+}
+
+enum JobPriority {
+  NORMAL
+  HIGH
+  CRITICAL
+}
+
+enum JobCategory {
+  NARRATIVE
+  COMMERCIAL
+  SHORT_FORM
+  OTHER
+}
+
+enum SubmissionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         Role
+  teamId       String?
+  team         Team?    @relation("TeamMembers", fields: [teamId], references: [id])
+  createdAt    DateTime @default(now())
+
+  claimedJobs    Job[]          @relation("ClaimedBy")
+  ledTeam        Team?          @relation("TeamLead")
+  notifications  Notification[]
+  reviewedSubs   Submission[]   @relation("ReviewedBy")
+}
+
+model Team {
+  id        String   @id @default(cuid())
+  name      String
+  leadId    String?  @unique
+  lead      User?    @relation("TeamLead", fields: [leadId], references: [id])
+  members   User[]   @relation("TeamMembers")
+  jobs      Job[]
+  createdAt DateTime @default(now())
+}
+
+model Job {
+  id          String      @id @default(cuid())
+  title       String
+  description String
+  brief       String?
+  rewardCents Int
+  deadline    DateTime
+  priority    JobPriority @default(NORMAL)
+  category    JobCategory @default(OTHER)
+  status      JobStatus   @default(OPEN)
+  teamId      String?
+  team        Team?       @relation(fields: [teamId], references: [id])
+  claimedById String?
+  claimedBy   User?       @relation("ClaimedBy", fields: [claimedById], references: [id])
+  claimedAt   DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  submission Submission?
+}
+
+model Submission {
+  id             String           @id @default(cuid())
+  jobId          String           @unique
+  job            Job              @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  deliverableUrl String?
+  notes          String?
+  submittedAt    DateTime         @default(now())
+  status         SubmissionStatus @default(PENDING)
+  feedback       String?
+  reviewedAt     DateTime?
+  reviewedById   String?
+  reviewedBy     User?            @relation("ReviewedBy", fields: [reviewedById], references: [id])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}

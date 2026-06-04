@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# STUDIO_PRO
 
-## Getting Started
+Internal talent job distribution and production management — Phase 1 implementation from the Stitch design export.
 
-First, run the development server:
+## Features (Phase 1)
+
+- Role-based auth (Admin, Team Lead, Talent)
+- User & team management
+- Job creation and listing (admin)
+- Real-time job board with instant claim (first-come-first-served)
+- One active job per talent
+- Talent workspace and submission flow
+- Team lead / admin review queue
+- In-app notifications
+
+## Stack
+
+- **Next.js 16** (App Router)
+- **Prisma** + SQLite (local dev; switch `DATABASE_URL` to PostgreSQL for production)
+- **NextAuth.js** (credentials)
+- **Tailwind CSS v4** (Studio Production design tokens)
+
+## Quick start
 
 ```bash
+cd studio-pro
+npm install
+npx prisma migrate dev --name init
+npm run db:seed
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Demo accounts (password: `studio123`)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Role       | Email              |
+|------------|--------------------|
+| Admin      | admin@studio.pro   |
+| Team Lead  | lead@studio.pro    |
+| Talent     | editor@studio.pro  |
 
-## Learn More
+## Scripts
 
-To learn more about Next.js, take a look at the following resources:
+| Command        | Description                |
+|----------------|----------------------------|
+| `npm run dev`  | Start dev server           |
+| `npm run build`| Production build           |
+| `npm run db:seed` | Reset seed data         |
+| `npx prisma studio` | Database GUI          |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+src/
+  app/
+    login/              # Auth gateway
+    (dashboard)/        # Authenticated shell
+      admin/            # Admin dashboard, jobs, teams
+      talent/           # Board, workspace, history
+      lead/review/      # Review queue
+  components/           # UI + forms
+  lib/
+    actions/            # Server actions (jobs, teams)
+    auth.ts             # NextAuth config
+    prisma.ts           # DB client
+```
 
-## Deploy on Vercel
+## Phase 2 (not implemented)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Socket.io real-time sync
+- S3 / Cloudinary uploads
+- NestJS API split
+- PostgreSQL in production
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Design reference mockups remain in `../stitch_talentflow_production_management_system/`.
