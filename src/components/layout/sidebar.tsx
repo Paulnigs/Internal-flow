@@ -48,7 +48,8 @@ export function Sidebar({ role }: { role: Role }) {
         {items.map((item) => {
           const active =
             pathname === item.href ||
-            (item.href !== "/admin" &&
+            (pathname != null &&
+              item.href !== "/admin" &&
               item.href !== "/talent" &&
               pathname.startsWith(item.href));
           return (

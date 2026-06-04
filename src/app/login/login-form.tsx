@@ -33,7 +33,7 @@ function LoginFormInner() {
       setError("Invalid operator ID or secure key.");
       return;
     }
-    router.push(params.get("callbackUrl") || "/");
+    router.push(params?.get("callbackUrl") ?? "/");
     router.refresh();
   }
 
