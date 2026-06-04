@@ -1,27 +1,13 @@
 "use client";
 
-import { useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { submitJob } from "@/lib/actions/jobs";
-
 export function SubmitJobForm({ jobId }: { jobId: string }) {
-  const [pending, start] = useTransition();
-  const router = useRouter();
-
   return (
     <form
       className="glass-panel rounded-lg p-md flex flex-col gap-sm border border-primary-container/30"
-      action={(fd) =>
-        start(async () => {
-          fd.set("jobId", jobId);
-          const r = await submitJob(fd);
-          if (r.error) alert(r.error);
-          else {
-            router.refresh();
-            alert("Submitted for review!");
-          }
-        })
-      }
+      onSubmit={(e) => {
+        e.preventDefault();
+        alert("UI preview only — submission is not saved.");
+      }}
     >
       <h2 className="text-label-caps text-primary-container">Submit Final Cut</h2>
       <input type="hidden" name="jobId" value={jobId} />
@@ -41,10 +27,9 @@ export function SubmitJobForm({ jobId }: { jobId: string }) {
       />
       <button
         type="submit"
-        disabled={pending}
-        className="h-10 bg-primary-container text-on-primary-fixed text-label-caps amber-glow disabled:opacity-50"
+        className="h-10 bg-primary-container text-on-primary-fixed text-label-caps amber-glow"
       >
-        {pending ? "Submitting…" : "Submit for Review"}
+        Submit for Review (Preview)
       </button>
     </form>
   );

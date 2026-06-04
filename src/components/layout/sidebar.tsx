@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { Icon } from "@/components/icon";
-import type { Role } from "@prisma/client";
+import type { Role } from "@/lib/types";
 
 type NavItem = { href: string; label: string; icon: string };
 

@@ -1,24 +1,16 @@
-import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/session";
-import { JobStatus } from "@prisma/client";
+import { MOCK_JOBS, MOCK_TEAMS } from "@/lib/mock-data";
 import { Icon } from "@/components/icon";
 
 export default async function AdminDashboardPage() {
   await requireRole(["ADMIN"]);
 
-  const [openJobs, claimedJobs, submittedJobs, talents, teams, recentJobs] =
-    await Promise.all([
-      prisma.job.count({ where: { status: JobStatus.OPEN } }),
-      prisma.job.count({ where: { status: JobStatus.CLAIMED } }),
-      prisma.job.count({ where: { status: JobStatus.SUBMITTED } }),
-      prisma.user.count({ where: { role: "TALENT" } }),
-      prisma.team.count(),
-      prisma.job.findMany({
-        orderBy: { updatedAt: "desc" },
-        take: 6,
-        include: { claimedBy: true, team: true },
-      }),
-    ]);
+  const openJobs = MOCK_JOBS.filter((j) => j.status === "OPEN").length;
+  const claimedJobs = MOCK_JOBS.filter((j) => j.status === "CLAIMED").length;
+  const submittedJobs = 1;
+  const talents = 2;
+  const teams = MOCK_TEAMS.length;
+  const recentJobs = MOCK_JOBS.slice(0, 6);
 
   const stats = [
     { label: "Open Jobs", value: openJobs, icon: "bolt", accent: "border-primary-container" },
@@ -32,7 +24,7 @@ export default async function AdminDashboardPage() {
       <div className="mb-lg">
         <h1 className="text-display-lg text-on-surface">Admin Dashboard</h1>
         <p className="text-body-sm text-on-surface-variant mt-1">
-          {teams} teams · real-time production overview
+          {teams} teams · UI preview (static data)
         </p>
       </div>
 
@@ -55,30 +47,28 @@ export default async function AdminDashboardPage() {
         <h2 className="text-label-caps mb-md border-b border-outline-variant/20 pb-sm">
           Recent Activity
         </h2>
-        <div className="overflow-x-auto">
-          <table className="w-full text-body-sm">
-            <thead>
-              <tr className="text-left text-label-caps text-on-surface-variant border-b border-outline-variant/20">
-                <th className="pb-sm pr-md">Job</th>
-                <th className="pb-sm pr-md">Status</th>
-                <th className="pb-sm pr-md">Assignee</th>
-                <th className="pb-sm">Team</th>
+        <table className="w-full text-body-sm">
+          <thead>
+            <tr className="text-left text-label-caps text-on-surface-variant border-b border-outline-variant/20">
+              <th className="pb-sm pr-md">Job</th>
+              <th className="pb-sm pr-md">Status</th>
+              <th className="pb-sm pr-md">Assignee</th>
+              <th className="pb-sm">Team</th>
+            </tr>
+          </thead>
+          <tbody>
+            {recentJobs.map((job) => (
+              <tr key={job.id} className="border-b border-outline-variant/10">
+                <td className="py-sm pr-md text-on-surface">{job.title}</td>
+                <td className="py-sm pr-md text-mono-data">{job.status}</td>
+                <td className="py-sm pr-md text-on-surface-variant">
+                  {job.claimedBy?.name ?? "—"}
+                </td>
+                <td className="py-sm text-on-surface-variant">{job.team?.name ?? "Open market"}</td>
               </tr>
-            </thead>
-            <tbody>
-              {recentJobs.map((job) => (
-                <tr key={job.id} className="border-b border-outline-variant/10">
-                  <td className="py-sm pr-md text-on-surface">{job.title}</td>
-                  <td className="py-sm pr-md text-mono-data">{job.status}</td>
-                  <td className="py-sm pr-md text-on-surface-variant">
-                    {job.claimedBy?.name ?? "—"}
-                  </td>
-                  <td className="py-sm text-on-surface-variant">{job.team?.name ?? "Open market"}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

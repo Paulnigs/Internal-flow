@@ -3,7 +3,7 @@ import { formatDeadline, formatMoney } from "@/lib/format";
 import { StatusBadge } from "@/components/status-badge";
 import { Icon } from "@/components/icon";
 import { ClaimJobButton } from "@/components/claim-job-button";
-import type { JobCategory, JobPriority, JobStatus } from "@prisma/client";
+import type { JobCategory, JobPriority, JobStatus } from "@/lib/types";
 
 export type JobCardData = {
   id: string;

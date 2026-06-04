@@ -1,9 +1,12 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcryptjs";
-import { prisma } from "@/lib/prisma";
-import { getAuthSecret } from "@/lib/env";
-import type { Role } from "@prisma/client";
+import { findDemoUser } from "@/lib/mock-data";
+import { getAuthSecret, resolveNextAuthUrl } from "@/lib/env";
+import type { Role } from "@/lib/types";
+
+if (!process.env.NEXTAUTH_URL) {
+  process.env.NEXTAUTH_URL = resolveNextAuthUrl();
+}
 
 export const authOptions: NextAuthOptions = {
   secret: getAuthSecret(),
@@ -19,12 +22,8 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
 
-        const email = credentials.email.trim().toLowerCase();
-        const user = await prisma.user.findUnique({ where: { email } });
+        const user = findDemoUser(credentials.email, credentials.password);
         if (!user) return null;
-
-        const valid = await bcrypt.compare(credentials.password, user.passwordHash);
-        if (!valid) return null;
 
         return {
           id: user.id,

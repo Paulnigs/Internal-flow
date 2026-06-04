@@ -1,22 +1,18 @@
 "use client";
 
-import { useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { reviewSubmission } from "@/lib/actions/jobs";
 
 export function ReviewForm({ submissionId }: { submissionId: string }) {
-  const [pending, start] = useTransition();
   const router = useRouter();
 
-  function handle(decision: "APPROVED" | "REJECTED", feedback: string) {
-    start(async () => {
-      const r = await reviewSubmission(submissionId, decision, feedback);
-      if (r.error) alert(r.error);
-      else {
-        router.push("/lead/review");
-        router.refresh();
-      }
-    });
+  function handle(decision: "APPROVED" | "REJECTED") {
+    const fb = (document.getElementById("feedback") as HTMLTextAreaElement)?.value;
+    if (decision === "REJECTED" && !fb?.trim()) {
+      alert("Please provide feedback for rejection.");
+      return;
+    }
+    alert(`UI preview only — ${decision} for ${submissionId} (not saved).`);
+    router.push("/lead/review");
   }
 
   return (
@@ -31,27 +27,15 @@ export function ReviewForm({ submissionId }: { submissionId: string }) {
       <div className="flex gap-sm">
         <button
           type="button"
-          disabled={pending}
-          onClick={() => {
-            const fb = (document.getElementById("feedback") as HTMLTextAreaElement).value;
-            handle("APPROVED", fb || "Approved — great work.");
-          }}
-          className="flex-1 h-10 bg-success/20 text-success border border-success/40 text-label-caps rounded hover:bg-success/30 disabled:opacity-50"
+          onClick={() => handle("APPROVED")}
+          className="flex-1 h-10 bg-success/20 text-success border border-success/40 text-label-caps rounded hover:bg-success/30"
         >
           Approve
         </button>
         <button
           type="button"
-          disabled={pending}
-          onClick={() => {
-            const fb = (document.getElementById("feedback") as HTMLTextAreaElement).value;
-            if (!fb.trim()) {
-              alert("Please provide feedback for rejection.");
-              return;
-            }
-            handle("REJECTED", fb);
-          }}
-          className="flex-1 h-10 bg-error/20 text-error border border-error/40 text-label-caps rounded hover:bg-error/30 disabled:opacity-50"
+          onClick={() => handle("REJECTED")}
+          className="flex-1 h-10 bg-error/20 text-error border border-error/40 text-label-caps rounded hover:bg-error/30"
         >
           Request Revision
         </button>

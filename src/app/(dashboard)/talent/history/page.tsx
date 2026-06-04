@@ -1,49 +1,50 @@
-import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/session";
 import { formatMoney } from "@/lib/format";
 import { StatusBadge } from "@/components/status-badge";
 import { format } from "date-fns";
 
-export default async function SubmissionHistoryPage() {
-  const session = await requireRole(["TALENT"]);
+const HISTORY = [
+  {
+    title: "Brand Film Assembly",
+    rewardCents: 89000,
+    submittedAt: new Date(),
+    status: "APPROVED" as const,
+    feedback: "Approved — excellent pacing.",
+  },
+  {
+    title: "Social Cuts Pack",
+    rewardCents: 45000,
+    submittedAt: new Date(Date.now() - 86400000 * 3),
+    status: "PENDING" as const,
+    feedback: null,
+  },
+];
 
-  const jobs = await prisma.job.findMany({
-    where: {
-      claimedById: session.user.id,
-      status: { in: ["SUBMITTED", "APPROVED", "REJECTED"] },
-    },
-    include: { submission: true },
-    orderBy: { updatedAt: "desc" },
-  });
+export default async function SubmissionHistoryPage() {
+  await requireRole(["TALENT"]);
 
   return (
     <div className="p-lg max-w-[1000px] mx-auto">
       <h1 className="text-display-lg text-on-surface mb-lg">Submission History</h1>
       <div className="flex flex-col gap-md">
-        {jobs.map((job) => (
-          <article key={job.id} className="glass-panel rounded-lg p-md">
+        {HISTORY.map((item) => (
+          <article key={item.title} className="glass-panel rounded-lg p-md">
             <div className="flex justify-between items-start gap-md">
               <div>
-                <h2 className="text-headline-md text-on-surface">{job.title}</h2>
+                <h2 className="text-headline-md text-on-surface">{item.title}</h2>
                 <p className="text-mono-data text-on-surface-variant mt-1">
-                  {formatMoney(job.rewardCents)} ·{" "}
-                  {job.submission?.submittedAt
-                    ? format(job.submission.submittedAt, "MMM d, yyyy")
-                    : "—"}
+                  {formatMoney(item.rewardCents)} · {format(item.submittedAt, "MMM d, yyyy")}
                 </p>
               </div>
-              <StatusBadge status={job.submission?.status ?? job.status} />
+              <StatusBadge status={item.status} />
             </div>
-            {job.submission?.feedback && (
+            {item.feedback && (
               <p className="mt-md text-body-sm text-on-surface-variant border-t border-outline-variant/20 pt-md">
-                {job.submission.feedback}
+                {item.feedback}
               </p>
             )}
           </article>
         ))}
-        {jobs.length === 0 && (
-          <p className="text-on-surface-variant">No submissions yet.</p>
-        )}
       </div>
     </div>
   );

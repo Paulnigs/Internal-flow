@@ -1,8 +1,6 @@
 "use client";
 
-import { useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { markAllNotificationsRead, markNotificationRead } from "@/lib/actions/teams";
+import { useState } from "react";
 import { Icon } from "@/components/icon";
 import { formatDistanceToNow } from "date-fns";
 
@@ -15,14 +13,22 @@ type Item = {
 };
 
 export function NotificationBell({
-  items,
-  unread,
+  items: initialItems,
+  unread: initialUnread,
 }: {
   items: Item[];
   unread: number;
 }) {
-  const [pending, start] = useTransition();
-  const router = useRouter();
+  const [items, setItems] = useState(initialItems);
+  const unread = items.filter((n) => !n.read).length;
+
+  function markRead(id: string) {
+    setItems((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
+  }
+
+  function markAllRead() {
+    setItems((prev) => prev.map((n) => ({ ...n, read: true })));
+  }
 
   return (
     <details className="relative group">
@@ -40,14 +46,8 @@ export function NotificationBell({
           {unread > 0 && (
             <button
               type="button"
-              disabled={pending}
               className="text-[10px] text-primary hover:underline"
-              onClick={() =>
-                start(async () => {
-                  await markAllNotificationsRead();
-                  router.refresh();
-                })
-              }
+              onClick={markAllRead}
             >
               Mark all read
             </button>
@@ -56,7 +56,7 @@ export function NotificationBell({
         <ul className="max-h-72 overflow-y-auto">
           {items.length === 0 ? (
             <li className="px-md py-lg text-body-sm text-on-surface-variant text-center">
-              No notifications yet
+              No notifications
             </li>
           ) : (
             items.map((n) => (
@@ -69,12 +69,7 @@ export function NotificationBell({
                 <button
                   type="button"
                   className="text-left w-full"
-                  onClick={() =>
-                    start(async () => {
-                      if (!n.read) await markNotificationRead(n.id);
-                      router.refresh();
-                    })
-                  }
+                  onClick={() => !n.read && markRead(n.id)}
                 >
                   <p className="text-label-caps text-on-surface">{n.title}</p>
                   <p className="text-body-sm text-on-surface-variant mt-0.5 line-clamp-2">

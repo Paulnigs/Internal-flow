@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
-import type { Role } from "@prisma/client";
+import type { Role } from "@/lib/types";
 
 export async function getSession() {
   return getServerSession(authOptions);

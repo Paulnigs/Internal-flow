@@ -1,17 +1,11 @@
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
-import { requireSession } from "@/lib/session";
-import { homeForRole } from "@/lib/session";
-import { Icon } from "@/components/icon";
+import { requireSession, homeForRole } from "@/lib/session";
+import { MOCK_NOTIFICATIONS } from "@/lib/mock-data";
 import { NotificationBell } from "@/components/notification-bell";
 
 export async function AppHeader() {
   const session = await requireSession();
-  const notifications = await prisma.notification.findMany({
-    where: { userId: session.user.id },
-    orderBy: { createdAt: "desc" },
-    take: 8,
-  });
+  const notifications = MOCK_NOTIFICATIONS;
   const unread = notifications.filter((n) => !n.read).length;
 
   return (
@@ -25,6 +19,9 @@ export async function AppHeader() {
         </Link>
         <span className="hidden md:inline text-label-caps text-on-surface-variant">
           {session.user.name} · {session.user.role.replace("_", " ")}
+        </span>
+        <span className="hidden lg:inline text-[10px] text-primary/80 uppercase tracking-wider">
+          UI Preview
         </span>
       </div>
       <div className="flex items-center gap-md">

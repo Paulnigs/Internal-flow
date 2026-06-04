@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/session";
+import { MOCK_JOBS } from "@/lib/mock-data";
 import { formatMoney, formatDeadline } from "@/lib/format";
 import { StatusBadge } from "@/components/status-badge";
 
@@ -12,19 +12,11 @@ export default async function AdminJobsPage({
   await requireRole(["ADMIN"]);
   const { tab = "all" } = await searchParams;
 
-  const statusFilter =
-    tab === "open"
-      ? { status: "OPEN" as const }
-      : tab === "claimed"
-        ? { status: "CLAIMED" as const }
-        : tab === "critical"
-          ? { priority: "CRITICAL" as const }
-          : {};
-
-  const jobs = await prisma.job.findMany({
-    where: statusFilter,
-    orderBy: { createdAt: "desc" },
-    include: { team: true, claimedBy: true },
+  const jobs = MOCK_JOBS.filter((job) => {
+    if (tab === "open") return job.status === "OPEN";
+    if (tab === "claimed") return job.status === "CLAIMED";
+    if (tab === "critical") return job.priority === "CRITICAL";
+    return true;
   });
 
   const tabs = [
@@ -39,7 +31,7 @@ export default async function AdminJobsPage({
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-md mb-lg">
         <div>
           <h1 className="text-display-lg text-on-surface">Job Management</h1>
-          <p className="text-body-sm text-on-surface-variant">Create and monitor production jobs</p>
+          <p className="text-body-sm text-on-surface-variant">UI preview — static jobs</p>
         </div>
         <Link
           href="/admin/jobs/new"
@@ -102,9 +94,6 @@ export default async function AdminJobsPage({
             })}
           </tbody>
         </table>
-        {jobs.length === 0 && (
-          <p className="p-lg text-center text-on-surface-variant">No jobs in this view.</p>
-        )}
       </div>
     </div>
   );

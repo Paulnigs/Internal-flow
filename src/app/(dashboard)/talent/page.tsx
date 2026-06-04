@@ -1,36 +1,15 @@
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/session";
-import { JobStatus } from "@prisma/client";
+import { MOCK_JOBS } from "@/lib/mock-data";
 import { formatMoney } from "@/lib/format";
 import { StatusBadge } from "@/components/status-badge";
 
 export default async function TalentDashboardPage() {
   const session = await requireRole(["TALENT"]);
-  const userId = session.user.id;
 
-  const [activeJob, completedCount, openJobs] = await Promise.all([
-    prisma.job.findFirst({
-      where: {
-        claimedById: userId,
-        status: { in: [JobStatus.CLAIMED, JobStatus.SUBMITTED, JobStatus.REJECTED] },
-      },
-    }),
-    prisma.job.count({
-      where: { claimedById: userId, status: JobStatus.APPROVED },
-    }),
-    prisma.job.count({
-      where: {
-        status: JobStatus.OPEN,
-        OR: [{ teamId: null }, ...(session.user.teamId ? [{ teamId: session.user.teamId }] : [])],
-      },
-    }),
-  ]);
-
-  const earned = await prisma.job.aggregate({
-    where: { claimedById: userId, status: JobStatus.APPROVED },
-    _sum: { rewardCents: true },
-  });
+  const activeJob = MOCK_JOBS.find(
+    (j) => j.claimedById === session.user.id && j.status === "CLAIMED",
+  ) ?? MOCK_JOBS.find((j) => j.status === "CLAIMED");
 
   return (
     <div className="p-lg max-w-[1600px] mx-auto">
@@ -45,17 +24,17 @@ export default async function TalentDashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-lg">
         <div className="glass-panel p-md rounded-lg border-t-2 border-primary-container">
           <span className="text-label-caps text-on-surface-variant">Total Earned</span>
-          <p className="text-display-lg text-on-surface mt-sm">
-            {formatMoney(earned._sum.rewardCents ?? 0)}
-          </p>
+          <p className="text-display-lg text-on-surface mt-sm">$1,250.00</p>
         </div>
         <div className="glass-panel p-md rounded-lg">
           <span className="text-label-caps text-on-surface-variant">Approved Jobs</span>
-          <p className="text-display-lg text-on-surface mt-sm">{completedCount}</p>
+          <p className="text-display-lg text-on-surface mt-sm">3</p>
         </div>
         <div className="glass-panel p-md rounded-lg">
           <span className="text-label-caps text-on-surface-variant">Open Opportunities</span>
-          <p className="text-display-lg text-on-surface mt-sm">{openJobs}</p>
+          <p className="text-display-lg text-on-surface mt-sm">
+            {MOCK_JOBS.filter((j) => j.status === "OPEN").length}
+          </p>
         </div>
       </div>
 
@@ -75,15 +54,7 @@ export default async function TalentDashboardPage() {
             </Link>
           </div>
         </div>
-      ) : (
-        <div className="glass-panel p-lg rounded-lg mb-lg text-on-surface-variant text-body-sm">
-          No active job — visit the{" "}
-          <Link href="/talent/board" className="text-primary hover:underline">
-            Live Board
-          </Link>{" "}
-          to claim a mission.
-        </div>
-      )}
+      ) : null}
 
       <Link
         href="/talent/board"
