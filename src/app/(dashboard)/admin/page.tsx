@@ -1,10 +1,7 @@
-import { requireRole } from "@/lib/session";
 import { MOCK_JOBS, MOCK_TEAMS } from "@/lib/mock-data";
 import { Icon } from "@/components/icon";
 
 export default async function AdminDashboardPage() {
-  await requireRole(["ADMIN"]);
-
   const openJobs = MOCK_JOBS.filter((j) => j.status === "OPEN").length;
   const claimedJobs = MOCK_JOBS.filter((j) => j.status === "CLAIMED").length;
   const submittedJobs = 1;

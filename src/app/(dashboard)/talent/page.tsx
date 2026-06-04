@@ -1,15 +1,10 @@
 import Link from "next/link";
-import { requireRole } from "@/lib/session";
 import { MOCK_JOBS } from "@/lib/mock-data";
 import { formatMoney } from "@/lib/format";
 import { StatusBadge } from "@/components/status-badge";
 
 export default async function TalentDashboardPage() {
-  const session = await requireRole(["TALENT"]);
-
-  const activeJob = MOCK_JOBS.find(
-    (j) => j.claimedById === session.user.id && j.status === "CLAIMED",
-  ) ?? MOCK_JOBS.find((j) => j.status === "CLAIMED");
+  const activeJob = MOCK_JOBS.find((j) => j.status === "CLAIMED");
 
   return (
     <div className="p-lg max-w-[1600px] mx-auto">

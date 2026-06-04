@@ -1,10 +1,7 @@
-import { requireRole } from "@/lib/session";
 import { MOCK_TEAMS } from "@/lib/mock-data";
 import { CreateTeamForm, CreateUserForm } from "@/components/team-forms";
 
 export default async function AdminTeamsPage() {
-  await requireRole(["ADMIN"]);
-
   return (
     <div className="p-lg max-w-[1600px] mx-auto grid grid-cols-1 xl:grid-cols-3 gap-lg">
       <div className="xl:col-span-2">

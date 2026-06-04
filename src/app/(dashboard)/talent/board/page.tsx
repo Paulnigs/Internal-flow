@@ -1,14 +1,11 @@
-import { requireRole } from "@/lib/session";
 import { MOCK_JOBS } from "@/lib/mock-data";
 import { JobCard } from "@/components/job-card";
 
 export default async function TalentJobBoardPage() {
-  const session = await requireRole(["ADMIN", "TEAM_LEAD", "TALENT"]);
-
   const openJobs = MOCK_JOBS.filter((j) => j.status === "OPEN");
   const teamMissions = openJobs.filter((j) => j.teamId);
   const globalMarket = openJobs.filter((j) => !j.teamId);
-  const showClaim = session.user.role === "TALENT";
+  const showClaim = true;
 
   return (
     <div className="p-lg max-w-[1600px] mx-auto flex flex-col gap-lg">

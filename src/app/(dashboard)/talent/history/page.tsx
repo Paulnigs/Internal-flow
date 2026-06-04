@@ -1,4 +1,3 @@
-import { requireRole } from "@/lib/session";
 import { formatMoney } from "@/lib/format";
 import { StatusBadge } from "@/components/status-badge";
 import { format } from "date-fns";
@@ -21,8 +20,6 @@ const HISTORY = [
 ];
 
 export default async function SubmissionHistoryPage() {
-  await requireRole(["TALENT"]);
-
   return (
     <div className="p-lg max-w-[1000px] mx-auto">
       <h1 className="text-display-lg text-on-surface mb-lg">Submission History</h1>

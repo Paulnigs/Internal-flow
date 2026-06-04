@@ -1,16 +1,9 @@
-# Deploy to Vercel (UI preview only)
+# Vercel — UI preview only
 
-No database required.
+No env vars required.
 
-1. [vercel.com/new](https://vercel.com/new) → import repo
-2. **Root Directory:** `studio-pro`
-3. Deploy (no env vars required; optional `NEXTAUTH_SECRET` for custom secret)
-4. Open `/login` → demo accounts below
+1. Root Directory: `studio-pro`
+2. Deploy
+3. Visit `https://your-app.vercel.app/`
 
-| Role | Email | Password |
-|------|-------|----------|
-| Admin | admin@studio.pro | studio123 |
-| Lead | lead@studio.pro | studio123 |
-| Talent | editor@studio.pro | studio123 |
-
-All data is hardcoded — forms show preview alerts only.
+The home page lists every screen. No `/api/auth` — authentication was removed.

@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { requireRole } from "@/lib/session";
 import { MOCK_JOBS } from "@/lib/mock-data";
 import { formatMoney, formatDeadline } from "@/lib/format";
 import { StatusBadge } from "@/components/status-badge";
@@ -9,7 +8,6 @@ export default async function AdminJobsPage({
 }: {
   searchParams: Promise<{ tab?: string }>;
 }) {
-  await requireRole(["ADMIN"]);
   const { tab = "all" } = await searchParams;
 
   const jobs = MOCK_JOBS.filter((job) => {

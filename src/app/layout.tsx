@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { Providers } from "@/components/providers";
 import "./globals.css";
 
 const inter = Inter({
@@ -9,8 +8,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "STUDIO_PRO | Internal Production Management",
-  description: "Internal talent job distribution and production management",
+  title: "STUDIO_PRO | UI Preview",
+  description: "Frontend preview of the internal production management UI",
 };
 
 export default function RootLayout({
@@ -26,9 +25,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="min-h-full antialiased">
-        <Providers>{children}</Providers>
-      </body>
+      <body className="min-h-full antialiased">{children}</body>
     </html>
   );
 }

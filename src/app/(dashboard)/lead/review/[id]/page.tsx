@@ -1,4 +1,3 @@
-import { requireRole } from "@/lib/session";
 import { getSubmissionById } from "@/lib/mock-data";
 import { formatMoney } from "@/lib/format";
 import { ReviewForm } from "@/components/review-form";
@@ -8,7 +7,6 @@ export default async function ReviewDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  await requireRole(["ADMIN", "TEAM_LEAD"]);
   const { id } = await params;
   const submission = getSubmissionById(id);
 

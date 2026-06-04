@@ -1,4 +1,3 @@
-import { requireRole } from "@/lib/session";
 import { Icon } from "@/components/icon";
 
 type Channel = { id: string; name: string; unread?: boolean; active?: boolean };
@@ -40,8 +39,6 @@ const messages: Msg[] = [
 ];
 
 export default async function TeamCommsPage() {
-  await requireRole(["ADMIN", "TEAM_LEAD", "TALENT"]);
-
   return (
     <div className="h-[calc(100vh-56px)] flex">
       {/* Channels */}

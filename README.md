@@ -1,31 +1,36 @@
 # STUDIO_PRO (UI Preview)
 
-Frontend preview of the internal production management UI. **No database** — hardcoded demo logins and mock data.
+Static frontend preview — **no database, no login, no API**.
 
-## Local dev
+## Vercel
+
+1. Import repo, set **Root Directory** to `studio-pro`
+2. Deploy (no environment variables needed)
+3. Open your site at `/` — pick any screen from the hub
+
+## Local
 
 ```bash
-cd studio-pro
 npm install
 npm run dev
 ```
 
-Open http://localhost:3000/login
+Open http://localhost:3000
 
-| Role | Email | Password |
-|------|-------|----------|
-| Admin | admin@studio.pro | studio123 |
-| Team Lead | lead@studio.pro | studio123 |
-| Talent | editor@studio.pro | studio123 |
+## Pages
 
-## Deploy to Vercel
+| Screen | URL |
+|--------|-----|
+| Hub (start here) | `/` |
+| Login mock | `/login` |
+| Admin dashboard | `/admin` |
+| Job management | `/admin/jobs` |
+| Team management | `/admin/teams` |
+| Talent dashboard | `/talent` |
+| Job board | `/talent/board` |
+| Workspace | `/talent/workspace/job-5` |
+| History | `/talent/history` |
+| Review queue | `/lead/review` |
+| Team comms | `/comms` |
 
-See [VERCEL.md](./VERCEL.md). Set **Root Directory** to `studio-pro`. No `DATABASE_URL` needed.
-
-## Scripts
-
-- `npm run dev` — development
-- `npm run build` — production build
-- `npm start` — run production server
-
-Design mockups: `../stitch_talentflow_production_management_system/`
+Use the **sidebar** on any dashboard screen to navigate.

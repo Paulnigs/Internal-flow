@@ -1,13 +1,10 @@
 import Link from "next/link";
-import { requireRole } from "@/lib/session";
 import { MOCK_SUBMISSIONS } from "@/lib/mock-data";
 import { formatMoney } from "@/lib/format";
 import { StatusBadge } from "@/components/status-badge";
 import { formatDistanceToNow } from "date-fns";
 
 export default async function ReviewQueuePage() {
-  await requireRole(["ADMIN", "TEAM_LEAD"]);
-
   return (
     <div className="p-lg max-w-[1200px] mx-auto">
       <h1 className="text-display-lg text-on-surface mb-1">Review Queue</h1>

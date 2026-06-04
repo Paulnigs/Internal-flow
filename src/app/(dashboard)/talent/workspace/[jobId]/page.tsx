@@ -1,4 +1,3 @@
-import { requireSession } from "@/lib/session";
 import { getJobById } from "@/lib/mock-data";
 import { formatMoney, formatDeadline } from "@/lib/format";
 import { StatusBadge } from "@/components/status-badge";
@@ -9,7 +8,6 @@ export default async function WorkspacePage({
 }: {
   params: Promise<{ jobId: string }>;
 }) {
-  await requireSession();
   const { jobId } = await params;
   const job = getJobById(jobId);
   const dl = formatDeadline(job.deadline);
